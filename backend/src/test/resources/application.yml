@@ -1,0 +1,21 @@
+# Test-only configuration. The secret below is for tests and is not used anywhere else.
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/crime_detector_test
+      auto-index-creation: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+app:
+  jwt:
+    secret: test-only-secret-with-at-least-thirty-two-bytes
+    expiration-minutes: 30
+  cors:
+    allowed-origins: http://localhost:5173
+  upload:
+    dir: target/test-uploads
+  seed:
+    demo-password: ""

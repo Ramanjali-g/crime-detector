@@ -1,0 +1,31 @@
+# dependencies / build output
+node_modules/
+dist/
+target/
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# user uploads
+uploads/
+backend/uploads/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# logs
+*.log
