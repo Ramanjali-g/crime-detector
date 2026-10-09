@@ -1,3 +1,4 @@
+
 package com.crimedetector.config;
 
 import com.crimedetector.security.JwtAuthFilter;
@@ -29,34 +30,61 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http, JwtService jwtService) throws Exception {
+
         http
-                .csrf(csrf -> csrf.disable()) // stateless API using bearer tokens, no cookies
-                .cors(Customizer.withDefaults())
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/uploads/**", "/error").permitAll()
-                        .anyRequest().authenticated())
-                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, e) -> {
+            .csrf(csrf -> csrf.disable())
+            .cors(Customizer.withDefaults())
+            .sessionManagement(s ->
+                s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(
+                    "/api/auth/**",
+                    "/uploads/**",
+                    "/error",
+                    "/health"
+                ).permitAll()
+                .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex ->
+                ex.authenticationEntryPoint((request, response, e) -> {
                     response.setStatus(401);
                     response.setContentType("application/json");
-                    response.getWriter().write("{\"status\":401,\"message\":\"Authentication required. Please log in.\"}");
-                }))
-                .addFilterBefore(new JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+                    response.getWriter().write(
+                        "{\"status\":401,\"message\":\"Authentication required. Please log in.\"}"
+                    );
+                })
+            )
+            .addFilterBefore(
+                new JwtAuthFilter(jwtService),
+                UsernamePasswordAuthenticationFilter.class
+            );
+
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
             @Value("${app.cors.allowed-origins}") List<String> allowedOrigins) {
+
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(allowedOrigins.stream().map(String::trim).toList());
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+        config.setAllowedOrigins(
+            allowedOrigins.stream().map(String::trim).toList()
+        );
+        config.setAllowedMethods(
+            List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        );
+        config.setAllowedHeaders(
+            List.of("Authorization", "Content-Type", "Accept")
+        );
         config.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 }
