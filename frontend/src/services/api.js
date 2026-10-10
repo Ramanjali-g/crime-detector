@@ -1,9 +1,8 @@
-```javascript
 import axios from 'axios';
 
 const TOKEN_KEY = 'cd_token';
 
-// Use the deployed backend in production and localhost during development.
+// Use Render in production and localhost during local development.
 export const API_URL = (
   import.meta.env.VITE_API_URL ||
   (import.meta.env.DEV
@@ -12,20 +11,15 @@ export const API_URL = (
 ).replace(/\/+$/, '');
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
+export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
+export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
-export const setToken = (token) =>
-  localStorage.setItem(TOKEN_KEY, token);
-
-export const clearToken = () =>
-  localStorage.removeItem(TOKEN_KEY);
-
-// Create the API client.
 const api = axios.create({
   baseURL: `${API_URL}/api`,
   timeout: 30000,
 });
 
-// Attach the JWT token to requests when available.
+// Attach the JWT token to requests.
 api.interceptors.request.use((config) => {
   const token = getToken();
 
@@ -105,7 +99,6 @@ export const usersApi = {
 // Crime report APIs.
 export const reportsApi = {
   list: () => api.get('/reports'),
-
   get: (id) => api.get(`/reports/${id}`),
 
   create: (data, image) => {
@@ -126,18 +119,14 @@ export const reportsApi = {
   },
 
   update: (id, payload) => api.put(`/reports/${id}`, payload),
-
   remove: (id) => api.delete(`/reports/${id}`),
 };
 
 // Emergency contact APIs.
 export const contactsApi = {
   list: () => api.get('/contacts'),
-
   create: (payload) => api.post('/contacts', payload),
-
   update: (id, payload) => api.put(`/contacts/${id}`, payload),
-
   remove: (id) => api.delete(`/contacts/${id}`),
 };
 
@@ -148,4 +137,3 @@ export const aiApi = {
 };
 
 export default api;
-```
