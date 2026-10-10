@@ -16,7 +16,7 @@ export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
-  timeout: 30000,
+  timeout: 120000,
 });
 
 // Attach the JWT token to requests.
